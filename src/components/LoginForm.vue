@@ -1,0 +1,74 @@
+<template>
+    <div>
+        <v-form @submit.prevent="login">
+
+            <v-text-field
+                    v-model="email"
+                    label="E-mail"
+                    required
+                    :rules="emailRules"
+            ></v-text-field>
+
+            <v-text-field
+                    v-model="password"
+                    label="Пароль"
+                    type="password"
+                    required
+                    :rules="passwordRules"
+            ></v-text-field>
+
+            <v-btn type="submit" color="primary">Войти</v-btn>
+
+        </v-form>
+    </div>
+</template>
+
+<script>
+    import { mapState } from 'vuex';
+
+    export default {
+        name: "LoginForm",
+
+        data() {
+            return {
+                //valid: false,
+
+                email: 'disasterovich@mail.ru',
+                password: 'zstebgtu',
+
+                passwordRules: [
+                    v => !!v || 'Password is required',
+                    //v => v.length <= 10 || 'Name must be less than 10 characters',
+                ],
+
+                emailRules: [
+                    v => !!v || 'E-mail is required',
+                    v => /.+@.+/.test(v) || 'E-mail must be valid',
+                ],
+            }
+        },
+
+        computed: {
+            ...mapState({
+                errors: state => state.user.errors,
+                user: state => state.user.item,
+            }),
+        },
+
+        methods: {
+            login() {
+
+                //TODO валидация вводимых данных на клиенте
+
+                this.$store.dispatch({'type': 'loginUser',
+                    'email': this.email,
+                    'password': this.password})
+            }
+        }
+
+    }
+</script>
+
+<style scoped>
+
+</style>

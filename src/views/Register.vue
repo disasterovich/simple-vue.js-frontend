@@ -1,0 +1,24 @@
+<template>
+  <div class="login">
+
+    <h1>Регистрация</h1>
+
+    <div class="row">
+        <div class="offset-3 col-6">
+            <register-form></register-form>
+        </div>
+    </div>
+
+  </div>
+</template>
+
+<script>
+
+import RegisterForm from "../components/RegisterForm";
+
+export default {
+    components: {
+        RegisterForm,
+    }
+}
+</script>
