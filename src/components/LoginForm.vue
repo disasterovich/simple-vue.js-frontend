@@ -1,12 +1,13 @@
 <template>
     <div>
-        <v-form @submit.prevent="login">
+        <v-form @submit.prevent="login" v-model="valid">
 
             <v-text-field
                     v-model="email"
                     label="E-mail"
                     required
                     :rules="emailRules"
+                    :error-messages="errors.email"
             ></v-text-field>
 
             <v-text-field
@@ -15,9 +16,10 @@
                     type="password"
                     required
                     :rules="passwordRules"
+                    :error-messages="errors.password"
             ></v-text-field>
 
-            <v-btn type="submit" color="primary">Войти</v-btn>
+            <v-btn type="submit" color="primary">{{$t('login')}}</v-btn>
 
         </v-form>
     </div>
@@ -31,7 +33,7 @@
 
         data() {
             return {
-                //valid: false,
+                valid: false,
 
                 email: 'disasterovich@mail.ru',
                 password: 'zstebgtu',
@@ -57,9 +59,6 @@
 
         methods: {
             login() {
-
-                //TODO валидация вводимых данных на клиенте
-
                 this.$store.dispatch({'type': 'loginUser',
                     'email': this.email,
                     'password': this.password})

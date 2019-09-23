@@ -10,7 +10,7 @@ export default {
             token: '',
         },
         isAuth: false,
-        errors: null,
+        errors: [],
     },
 
     actions: {
@@ -23,10 +23,7 @@ export default {
                     password: payload['password'],
                 })
                 .then( (response) => {
-                    commit({
-                        type: 'LOGIN_USER',
-                        data: response.data,
-                    })
+                    commit('LOGIN_USER', response.data)
                 })
                 .catch((error) => {
                     console.log(error)
@@ -42,10 +39,7 @@ export default {
                     password2: payload['password2'],
                 })
                 .then( (response) => {
-                    commit({
-                        type: 'REGISTER_USER',
-                        data: response.data,
-                    })
+                    commit('REGISTER_USER', response.data)
                 })
                 .catch((error) => {
                     console.log(error)
@@ -56,14 +50,14 @@ export default {
 
         LOGIN_USER(state, payload) {
 
-            if (payload.data.errors) {
-                state.errors = payload.data.errors
+            if (payload.errors) {
+                state.errors = payload.errors
             }
 
-            if (payload.data.status == 'success') {
+            if (payload.status == 'success') {
 
-                state.item = payload.data.user_data
-                state.errors = null
+                state.item = payload.user_data
+                state.errors = []
                 state.isAuth = true
 
                 //сохраняем в localStorage
@@ -71,7 +65,7 @@ export default {
 
                 axios.defaults.headers.common['Authorization'] = 'Bearer '+state.item.token;
 
-                //редирект на продукты
+                //редирект на заказы
                 router.push({path: 'orders'})
             }
         },
@@ -101,11 +95,11 @@ export default {
 
         //регистрация пользователя
         REGISTER_USER(state, payload) {
-            if (payload.data.errors) {
-                state.errors = payload.data.errors
+            if (payload.errors) {
+                state.errors = payload.errors
             }
 
-            if (payload.data.status == 'success') {
+            if (payload.status == 'success') {
                 //редирект на вход
                 router.push({path: 'login'})
             }

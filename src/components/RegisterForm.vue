@@ -6,12 +6,14 @@
                     v-model="name"
                     label="Имя"
                     required
+                    :error-messages="errors.name"
             ></v-text-field>
 
             <v-text-field
                     v-model="email"
                     label="E-mail"
                     required
+                    :error-messages="errors.email"
             ></v-text-field>
 
             <v-text-field
@@ -19,6 +21,7 @@
                     label="Пароль"
                     type="password"
                     required
+                    :error-messages="errors.password"
             ></v-text-field>
 
             <v-text-field
@@ -26,9 +29,10 @@
                     label="Пароль еще раз"
                     type="password"
                     required
+                    :error-messages="errors.password2"
             ></v-text-field>
 
-            <v-btn type="submit" color="primary">Зерегистрироваться</v-btn>
+            <v-btn type="submit" color="primary">{{$t('register')}}</v-btn>
 
         </v-form>
     </div>

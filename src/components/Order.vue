@@ -1,11 +1,11 @@
 <template>
     <div>
-        <v-btn color="primary" @click.stop="addOrder()">Добавить заказ</v-btn>
+        <v-btn color="primary" @click.stop="addOrder()">{{$t('createOrder')}}</v-btn>
 
-        <v-dialog v-model="dialog" max-width="600">
+        <v-dialog :value="dialog" @input="hideOrderDialog" max-width="600">
             <v-card>
                 <v-card-title class="headline">
-                    {{order.id ? 'Редактирование заказа с ID=' + order.id : 'Создать заказ'}}
+                    {{order.id ? $t('editOrderWithId') + order.id : $t('createOrder')}}
                 </v-card-title>
 
                 <v-card-text>
@@ -13,7 +13,7 @@
                     <v-text-field
                         :value="order.clientName"
                         @input="value => updateOrderField('clientName',value)"
-                        label="Имя клиента*"
+                        :label="$t('clientName')+'*'"
                         required
                         :error-messages="errors.clientName"
                     ></v-text-field>
@@ -22,7 +22,7 @@
                         :value="order.clientPhone"
                         @input="value => updateOrderField('clientPhone',value)"
                         type="tel"
-                        label="Телефон клиента*"
+                        :label="$t('clientPhone')+'*'"
                         required
                         :error-messages="errors.clientPhone"
                     ></v-text-field>
@@ -30,7 +30,7 @@
                     <v-text-field
                         :value="order.departureAddress"
                         @input="value => updateOrderField('departureAddress',value)"
-                        label="Адрес выезда*"
+                        :label="$t('departureAddress')+'*'"
                         required
                         :error-messages="errors.departureAddress"
                     ></v-text-field>
@@ -41,12 +41,11 @@
                         :nudge-right="40"
                         transition="scale-transition"
                         offset-y
-                        full-width
                         min-width="290px"
                     >
                         <template v-slot:activator="{ on }">
                             <v-text-field
-                                label="Дата выезда c*"
+                                :label="$t('departureFromDate')+'*'"
                                 readonly
                                 v-on="on"
                                 :value="order.departureFromDate"
@@ -61,13 +60,12 @@
                     </v-menu>
 
                     <v-text-field
-                        label="Время выезда c*"
+                        :label="$t('departureFromTime')+'*'"
                         type="time"
                         :value="order.departureFromTime"
                         @input="value => updateOrderField('departureFromTime',value)"
                         :error-messages="errors.departureFromTime"
                     ></v-text-field>
-
 
                     <v-menu
                         v-model="menuDepartureToDate"
@@ -75,12 +73,11 @@
                         :nudge-right="40"
                         transition="scale-transition"
                         offset-y
-                        full-width
                         min-width="290px"
                     >
                         <template v-slot:activator="{ on }">
                             <v-text-field
-                                label="Дата выезда до*"
+                                :label="$t('departureToDate')+'*'"
                                 readonly
                                 v-on="on"
                                 :value="order.departureToDate"
@@ -95,21 +92,23 @@
                     </v-menu>
 
                     <v-text-field
-                        label="Время выезда до*"
+                        :label="$t('departureToTime')+'*'"
                         type="time"
                         :value="order.departureToTime"
                         @input="value => updateOrderField('departureToTime',value)"
                         :error-messages="errors.departureToTime"
                     ></v-text-field>
 
-                    <small>*indicates required field</small>
+                    <input type="hidden" :value="order.id" />
+
+                    <small>*{{$t('indicatesRequiredField')}}</small>
 
                 </v-card-text>
 
                 <v-card-actions>
                     <div class="flex-grow-1"></div>
-                    <v-btn color="blue darken-1" text @click="dialog = false">Закрыть</v-btn>
-                    <v-btn color="blue darken-1" text @click="saveOrder">{{order.id ? 'Обновить' : 'Сохранить'}}</v-btn>
+                    <v-btn color="blue darken-1" text @click="hideOrderDialog">{{$t('close')}}</v-btn>
+                    <v-btn color="blue darken-1" text @click="saveOrder">{{order.id ? $t('update') : $t('save')}}</v-btn>
                 </v-card-actions>
 
             </v-card>
@@ -119,7 +118,6 @@
 
 <script>
     import { mapState } from 'vuex';
-    import moment from 'moment'
 
     export default {
         name: "Order",
@@ -128,14 +126,7 @@
             return {
                 menuDepartureFromDate: '',
                 menuDepartureToDate: '',
-
-                currentDate: moment(new Date()).format('YYYY-MM-DD'),
-
-                dialog: false,
             }
-        },
-
-        components: {
         },
 
         computed: {
@@ -143,6 +134,7 @@
                 order: state => state.order.item,
                 loading: state => state.order.loading,
                 errors: state => state.order.errors,
+                dialog: state => state.order.dialog,
             }),
         },
 
@@ -157,7 +149,7 @@
 
                         //после сохранения закрываем окно
                         if (this.errors.length == 0) {
-                            this.dialog = false
+                            this.$store.commit('HIDE_ORDER_DIALOG')
                         }
                         break;
                 }
@@ -165,6 +157,10 @@
         },
 
         methods: {
+
+            hideOrderDialog() {
+                this.$store.commit('HIDE_ORDER_DIALOG')
+            },
 
             updateOrderField(key,value) {
 
@@ -183,7 +179,7 @@
                 this.$store.dispatch({'type': 'saveOrder'})
             },
             addOrder() {
-                this.dialog = true
+                this.$store.commit('SHOW_ORDER_DIALOG')
                 this.$store.commit('ADD_ORDER')
             },
         }

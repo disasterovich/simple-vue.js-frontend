@@ -45,6 +45,9 @@ router.beforeEach((to, from, next) => {
         //инициализация польз. данных
         store.commit({type: 'INIT_USER'})
 
+        //инициализация настроек
+        store.commit({type: 'INIT_SETTINGS'})
+
         if (to.name === 'orders') {
             //инициализация данных о продуктах (сортировки)
             store.commit({type: 'INIT_ORDERS'})

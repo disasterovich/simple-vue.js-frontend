@@ -3,7 +3,7 @@
         <v-text-field
             :value="search.clientName"
             @input="value => updateOrdersSearchField('clientName', value)"
-            placeholder="Поиск по имени клиента">
+            :placeholder="$t('searchByClientName')">
         </v-text-field>
     </div>
 </template>
@@ -22,13 +22,11 @@
         },
 
         methods: {
-
             updateOrdersSearchField:
                 _.debounce(function (key, value) {
                     this.$store.commit('UPDATE_ORDERS_SEARCH_FIELD', { key: key, value: value })
                     this.$store.dispatch({'type': 'loadOrders'})
                 }, 1000)
-
         }
     }
 </script>

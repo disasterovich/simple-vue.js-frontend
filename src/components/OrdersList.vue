@@ -1,6 +1,5 @@
 <template>
     <div>
-
         <div v-if="orders.length > 0">
             <v-simple-table>
                 <thead>
@@ -8,14 +7,15 @@
                     <th class="text-left">
                         <a href="#" @click.prevent="setSort('id')">ID<v-icon>{{getSortIcon('id')}}</v-icon></a>
                     </th>
-                    <th class="text-left">Время создания</th>
+                    <th class="text-left">{{$t('creationTime')}}</th>
                     <th class="text-left">
-                        <a href="#" @click.prevent="setSort('client_name')">Имя<v-icon>{{getSortIcon('client_name')}}</v-icon></a>
+                        <a href="#" @click.prevent="setSort('client_name')">{{$t('name')}}<v-icon>{{getSortIcon('client_name')}}</v-icon></a>
                     </th>
-                    <th class="text-left">Телефон</th>
-                    <th class="text-left">Адрес</th>
-                    <th class="text-left">С</th>
-                    <th class="text-left">По</th>
+                    <th class="text-left">{{$t('phone')}}</th>
+                    <th class="text-left">{{$t('address')}}</th>
+                    <th class="text-left">{{$t('from')}}</th>
+                    <th class="text-left">{{$t('to')}}</th>
+                    <th class="text-left">{{$t('actions')}}</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -27,6 +27,14 @@
                     <td>{{ order.departure_address }}</td>
                     <td>{{ timestampToDate(order.departure_from) }}</td>
                     <td>{{ timestampToDate(order.departure_to) }}</td>
+                    <td>
+                        <a href="#" @click.stop="loadOrder(order.id)">
+                            <v-icon>mdi-pencil</v-icon>
+                        </a>
+                        <a href="#" @click.stop="deleteOrder(order.id)">
+                            <v-icon>mdi-delete</v-icon>
+                        </a>
+                    </td>
                 </tr>
                 </tbody>
             </v-simple-table>
@@ -42,8 +50,7 @@
                 </v-col>
             </v-row>
         </div>
-        <div v-else>Нет заказов</div>
-
+        <div v-else>{{$t('noOrders')}}</div>
     </div>
 </template>
 
@@ -100,12 +107,13 @@
             },
 
             loadOrder(id) {
-                this.$store.commit({type: 'SET_ORDERf_LOADING_STATE', value: true})
+                this.$store.commit({type: 'SET_ORDER_LOADING_STATE', value: true})
                 this.$store.dispatch({'type': 'loadOrder', 'id': id})
+                this.$store.commit('SHOW_ORDER_DIALOG')
             },
 
             deleteOrder(id) {
-                if (confirm('Вы уверены что хотите удалить?')) {
+                if (confirm(this.$t('areYouSureWantDelete'))) {
                     this.$store.dispatch({'type': 'deleteOrder', 'id': id})
                 }
             },

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import moment from 'moment'
 
 export default {
     state: {
@@ -13,6 +14,8 @@ export default {
             departureToTime: '',
         },
 
+        dialog: false, //отображ. v-dialog
+
         loading: false,
         errors: [],
     },
@@ -21,7 +24,7 @@ export default {
             axios
                 .get(this.state.API_URL+'orders/'+payload.id)
                 .then( (response) => {
-                    commit({type: 'LOAD_ORDER',data: response.data})
+                    commit('LOAD_ORDER', response.data)
                 })
                 .catch((error) => {
                     console.log(error)
@@ -52,11 +55,8 @@ export default {
                 axios
                     .patch(this.state.API_URL+'orders/'+this.state.order.item.id, form_data)
                     .then( (response) => {
-
-                        //commit({type: 'SAVE_ORDER',data: response.data})
                         commit('SAVE_ORDER', response.data)
-
-                        //обновляем список товаров
+                        //обновляем список заказов
                         this.dispatch({'type': 'loadOrders'})
                     })
                     .catch((error) => {
@@ -68,11 +68,8 @@ export default {
                 axios
                     .post(this.state.API_URL+'orders', form_data)
                     .then( (response) => {
-
-                        //commit({type: 'SAVE_ORDER',data: response.data})
                         commit('SAVE_ORDER', response.data)
-
-                        //обновляем список товаров
+                        //обновляем список заказов
                         this.dispatch({'type': 'loadOrders'})
                     })
                     .catch((error) => {
@@ -90,7 +87,15 @@ export default {
 
         //загрузка существ.
         LOAD_ORDER(state, payload) {
-            state.item = payload.data
+            state.item.id = payload.order_data.id
+            state.item.clientName = payload.order_data.clientName
+            state.item.clientPhone = payload.order_data.clientPhone
+            state.item.departureAddress = payload.order_data.departureAddress
+            state.item.departureFromDate = moment.unix(payload.order_data.departureFrom).format("YYYY-MM-DD")
+            state.item.departureFromTime = moment.unix(payload.order_data.departureFrom).format("HH:mm")
+            state.item.departureToDate = moment.unix(payload.order_data.departureTo).format("YYYY-MM-DD")
+            state.item.departureToTime = moment.unix(payload.order_data.departureTo).format("HH:mm")
+
             state.loading = false
         },
 
@@ -118,5 +123,12 @@ export default {
             }
         },
 
+        SHOW_ORDER_DIALOG(state, payload) {
+            state.dialog = true
+        },
+
+        HIDE_ORDER_DIALOG(state, payload) {
+            state.dialog = false
+        },
     },
 }

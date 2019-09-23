@@ -1,7 +1,7 @@
 <template>
   <div class="login">
 
-    <h1>Регистрация</h1>
+    <h1>{{$t('register')}}</h1>
 
     <div class="row">
         <div class="offset-3 col-6">

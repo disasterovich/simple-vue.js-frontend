@@ -1,7 +1,7 @@
 <template>
   <div class="login">
 
-    <h1>Вход</h1>
+    <h1>{{$t('login')}}</h1>
 
     <div class="row">
         <div class="offset-3 col-6">
