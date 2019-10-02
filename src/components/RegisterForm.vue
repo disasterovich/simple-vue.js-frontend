@@ -6,6 +6,7 @@
                     v-model="name"
                     label="Имя"
                     required
+                    :rules="nameRules"
                     :error-messages="errors.name"
             ></v-text-field>
 
@@ -13,6 +14,7 @@
                     v-model="email"
                     label="E-mail"
                     required
+                    :rules="emailRules"
                     :error-messages="errors.email"
             ></v-text-field>
 
@@ -21,6 +23,7 @@
                     label="Пароль"
                     type="password"
                     required
+                    :rules="passwordRules"
                     :error-messages="errors.password"
             ></v-text-field>
 
@@ -29,10 +32,11 @@
                     label="Пароль еще раз"
                     type="password"
                     required
+                    :rules="passwordRules"
                     :error-messages="errors.password2"
             ></v-text-field>
 
-            <v-btn type="submit" color="primary">{{$t('register')}}</v-btn>
+            <v-btn type="submit" color="primary" :disabled="loading" :loading="loading">{{$t('register')}}</v-btn>
 
         </v-form>
     </div>
@@ -51,13 +55,28 @@
                 password: 'zstebgtu', //null,
                 password2: 'zstebgtu', //null,
 
-                //TODO добавить каптчу
+                nameRules: [
+                    v => !!v || 'Name is required',
+                ],
+
+                passwordRules: [
+                    v => !!v || 'Password is required',
+                    //v => v.length <= 10 || 'Name must be less than 10 characters',
+                ],
+
+                emailRules: [
+                    v => !!v || 'E-mail is required',
+                    v => /.+@.+/.test(v) || 'E-mail must be valid',
+                ],
+
+                //TODO add captcha
             }
         },
 
         computed: {
             ...mapState({
                 errors: state => state.user.errors,
+                loading: state => state.user.loading,
                 user: state => state.user.item,
             }),
         },
@@ -65,7 +84,7 @@
         methods: {
             register() {
 
-                //TODO валидация вводимых данных на клиенте
+                //TODO add client side validation
 
                 this.$store.dispatch({'type': 'registerUser',
                     'name': this.name,

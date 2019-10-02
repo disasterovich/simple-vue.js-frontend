@@ -1,5 +1,6 @@
 import axios from "axios";
 import router from '../../router';
+import i18n from "../../i18n";
 
 export default {
     state: {
@@ -10,12 +11,16 @@ export default {
             token: '',
         },
         isAuth: false,
+
+        loading: false,
         errors: [],
     },
 
     actions: {
 
         loginUser({commit}, payload) {
+
+            commit({type: 'SET_USER_LOADING_STATE', value: true})
 
             axios
                 .post(this.state.API_URL+'users/login', {
@@ -24,13 +29,25 @@ export default {
                 })
                 .then( (response) => {
                     commit('LOGIN_USER', response.data)
+
+                    if (response.data.status == 'success') {
+                        //redirect to orders
+                        router.push({path: 'orders'})
+                    }
                 })
                 .catch((error) => {
-                    console.log(error)
-                });
+                    //console.log(error)
+                    commit('SHOW_MESSAGE', {text: error, 'color': 'error'})
+                })
+                .finally(() => {
+                    commit({type: 'SET_USER_LOADING_STATE', value: false})
+                })
         },
 
         registerUser({commit}, payload) {
+
+            commit({type: 'SET_USER_LOADING_STATE', value: true})
+
             axios
                 .post(this.state.API_URL+'users/register', {
                     name: payload['name'],
@@ -38,12 +55,22 @@ export default {
                     password: payload['password'],
                     password2: payload['password2'],
                 })
-                .then( (response) => {
+                .then((response) => {
                     commit('REGISTER_USER', response.data)
+
+                    if (response.data.status == 'success') {
+                         commit('SHOW_MESSAGE', {text: i18n.t('registrationCompletedSuccessfully'), 'color': 'success'})
+                        //redirect to login page
+                        router.push({path: 'login'})
+                    }
                 })
                 .catch((error) => {
-                    console.log(error)
-                });
+                    //console.log(error)
+                    commit('SHOW_MESSAGE', {text: error, 'color': 'error'})
+                })
+                .finally(() => {
+                    commit({type: 'SET_USER_LOADING_STATE', value: false})
+                })
         },
     },
     mutations: {
@@ -55,54 +82,44 @@ export default {
             }
 
             if (payload.status == 'success') {
-
                 state.item = payload.user_data
                 state.errors = []
                 state.isAuth = true
-
-                //сохраняем в localStorage
+                //saving in localStorage
                 localStorage.setItem('user', JSON.stringify(state.item));
-
                 axios.defaults.headers.common['Authorization'] = 'Bearer '+state.item.token;
-
-                //редирект на заказы
-                router.push({path: 'orders'})
             }
         },
 
         LOGOUT_USER(state) {
-
             state.item = null
             state.isAuth = false
             localStorage.removeItem('user')
-            router.push({path: 'login'})
         },
 
-        //инизиализация данных пользователя
+        //init. user data
         INIT_USER(state) {
-
             if (state.isAuth === false) {
 
-                let settings = JSON.parse(localStorage.getItem('user'))
+                let user = JSON.parse(localStorage.getItem('user'))
 
-                if (settings) {
-                    state.item = settings
+                if (user) {
+                    state.item = user
                     state.isAuth = true
-                    axios.defaults.headers.common['Authorization'] = 'Bearer ' + settings.token;
+                    axios.defaults.headers.common['Authorization'] = 'Bearer ' + user.token;
                 }
             }
         },
 
-        //регистрация пользователя
+        //user registration
         REGISTER_USER(state, payload) {
             if (payload.errors) {
                 state.errors = payload.errors
             }
+        },
 
-            if (payload.status == 'success') {
-                //редирект на вход
-                router.push({path: 'login'})
-            }
-        }
+        SET_USER_LOADING_STATE(state, payload) {
+            state.loading = payload.value
+        },
     },
 }

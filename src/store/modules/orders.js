@@ -1,4 +1,5 @@
 import axios from 'axios';
+import i18n from "../../i18n";
 
 export default {
     state: {
@@ -10,7 +11,7 @@ export default {
             id: 'asc',
             client_name: 'desc',
         },
-        pagination: {}, //для v-pagination
+        pagination: {}, //for v-pagination
     },
     getters: {
         ordersSortString: state => {
@@ -28,15 +29,19 @@ export default {
         loadOrders ({commit}, payload) {
 
             payload['page'] = payload['page'] || 1
-            payload['per-page'] = payload['per-page'] || this.state.PER_PAGE
+            payload['per-page'] = payload['per-page'] || this.state.settings.perPage
 
             axios
-                .get(this.state.API_URL+'orders?client_name='+this.state.orders.search.clientName+'&page='+payload['page']+'&per-page='+payload['per-page']+'&sort='+this.getters.ordersSortString)
-                .then( (response) => {
-                    commit({
-                        type: 'LOAD_ORDERS',
-                        data: response.data,
+                .get(this.state.API_URL+'orders', {
+                        params: {
+                            'client_name': this.state.orders.search.clientName,
+                            'page': payload['page'],
+                            'per-page': payload['per-page'],
+                            'sort': this.getters.ordersSortString,
+                        },
                     })
+                .then( (response) => {
+                    commit({type: 'LOAD_ORDERS', data: response.data})
 
                     commit({type: 'SET_PAGINATION', pagination: {
                         'current-page': parseInt(response.headers['x-pagination-current-page']),
@@ -48,7 +53,8 @@ export default {
 
                 })
                 .catch((error) => {
-                    console.log(error)
+                    //console.log(error)
+                    commit('SHOW_MESSAGE', {text: i18n.t('errorLoadingOrders'), 'color': 'error'})
                 });
         },
 
@@ -80,7 +86,7 @@ export default {
                 state.sort[payload.value] = 'asc'
             }
 
-            //сохраняем в localStorage
+            //saving in localStorage
             let orders = JSON.parse(localStorage.getItem('orders')) || {}
             orders.sort = state.sort
             localStorage.setItem('orders', JSON.stringify(orders));
@@ -88,10 +94,10 @@ export default {
 
         INIT_ORDERS(state) {
 
-            let settings = JSON.parse(localStorage.getItem('orders'))
+            let orders = JSON.parse(localStorage.getItem('orders'))
 
-            if (settings && settings.sort) {
-                state.sort = settings.sort
+            if (orders && orders.sort) {
+                state.sort = orders.sort
             }
         },
     },

@@ -38,9 +38,17 @@ export default new VueI18n({
 
             searchByClientName: 'Search by client name',
             actions: 'Actions',
+            edit: 'Edit',
+            delete: 'Delete',
+            clone: 'Clone',
             areYouSureWantDelete: 'Are you sure you want to delete?',
             indicatesRequiredField: 'indicates required field',
 
+            orderCreatedSuccessfully: 'Order created successfully',
+            registrationCompletedSuccessfully: 'Registration completed successfully',
+            orderWithIdDeleted: 'Order with id={id} deleted',
+            orderWithIdSuccessfullyEdited: 'Order with id={id} successfully edited',
+            errorLoadingOrders: 'Error loading orders',
         },
         ru: {
             testAdmin: 'Тестовая админка',
@@ -72,8 +80,17 @@ export default new VueI18n({
 
             searchByClientName: 'Поиск по имени клиента',
             actions: 'Действия',
+            edit: 'Редактировать',
+            delete: 'Удалить',
+            clone: 'Клонировать',
             areYouSureWantDelete: 'Вы уверены что хотите удалить?',
             indicatesRequiredField: 'обязательные поля',
+
+            orderCreatedSuccessfully: 'Заказ успешно создан',
+            registrationCompletedSuccessfully: 'Регистрация прошла успешно',
+            orderWithIdDeleted: 'Заказ с id={id} удален',
+            orderWithIdSuccessfullyEdited: 'Заказ с id={id} успешно отредактирован',
+            errorLoadingOrders: 'Ошибка загрузки заказов',
         },
     }
 })

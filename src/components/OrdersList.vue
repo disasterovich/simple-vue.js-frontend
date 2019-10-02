@@ -28,10 +28,13 @@
                     <td>{{ timestampToDate(order.departure_from) }}</td>
                     <td>{{ timestampToDate(order.departure_to) }}</td>
                     <td>
-                        <a href="#" @click.stop="loadOrder(order.id)">
+                        <a href="#" @click.stop="cloneOrder(order.id)" :title="$t('clone')">
+                            <v-icon>mdi-content-copy</v-icon>
+                        </a>
+                        <a href="#" @click.stop="loadOrder(order.id)" :title="$t('edit')">
                             <v-icon>mdi-pencil</v-icon>
                         </a>
-                        <a href="#" @click.stop="deleteOrder(order.id)">
+                        <a href="#" @click.stop="deleteOrder(order.id)" :title="$t('delete')">
                             <v-icon>mdi-delete</v-icon>
                         </a>
                     </td>
@@ -107,7 +110,7 @@
             },
 
             loadOrder(id) {
-                this.$store.commit({type: 'SET_ORDER_LOADING_STATE', value: true})
+                this.$store.commit('CLEAR_ORDER_ERRORS')
                 this.$store.dispatch({'type': 'loadOrder', 'id': id})
                 this.$store.commit('SHOW_ORDER_DIALOG')
             },
@@ -116,6 +119,12 @@
                 if (confirm(this.$t('areYouSureWantDelete'))) {
                     this.$store.dispatch({'type': 'deleteOrder', 'id': id})
                 }
+            },
+
+            cloneOrder(id) {
+                this.$store.commit('CLEAR_ORDER_ERRORS')
+                this.$store.dispatch({'type': 'loadOrder', 'id': id, 'mode': 'clone'})
+                this.$store.commit('SHOW_ORDER_DIALOG')
             },
         }
     }

@@ -1,5 +1,5 @@
 <template>
-  <div class="login">
+  <div class="register">
 
     <h1>{{$t('register')}}</h1>
 
@@ -14,7 +14,7 @@
 
 <script>
 
-import RegisterForm from "../components/RegisterForm";
+import RegisterForm from "@/components/RegisterForm";
 
 export default {
     components: {

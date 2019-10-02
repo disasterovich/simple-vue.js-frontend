@@ -55,6 +55,8 @@
                         <v-date-picker
                             @input="value => updateOrderField('departureFromDate',value)"
                             :value="order.departureFromDate"
+                            :first-day-of-week="1"
+                            :locale="$i18n.locale"
                         >
                         </v-date-picker>
                     </v-menu>
@@ -87,6 +89,8 @@
                         <v-date-picker
                             @input="value => updateOrderField('departureToDate',value)"
                             :value="order.departureToDate"
+                            :first-day-of-week="1"
+                            :locale="$i18n.locale"
                         >
                         </v-date-picker>
                     </v-menu>
@@ -108,7 +112,7 @@
                 <v-card-actions>
                     <div class="flex-grow-1"></div>
                     <v-btn color="blue darken-1" text @click="hideOrderDialog">{{$t('close')}}</v-btn>
-                    <v-btn color="blue darken-1" text @click="saveOrder">{{order.id ? $t('update') : $t('save')}}</v-btn>
+                    <v-btn color="blue darken-1" text @click="saveOrder" :disabled="loading" :loading="loading">{{order.id ? $t('update') : $t('save')}}</v-btn>
                 </v-card-actions>
 
             </v-card>
@@ -118,6 +122,7 @@
 
 <script>
     import { mapState } from 'vuex';
+    import _ from 'lodash';
 
     export default {
         name: "Order",
@@ -146,9 +151,8 @@
                 switch (mutation.type) {
 
                     case 'SAVE_ORDER':
-
-                        //после сохранения закрываем окно
-                        if (this.errors.length == 0) {
+                        //after saving, close the window
+                        if (_.isEmpty(this.errors)) {
                             this.$store.commit('HIDE_ORDER_DIALOG')
                         }
                         break;
@@ -164,11 +168,11 @@
 
             updateOrderField(key,value) {
 
-                //закрываем меню выбора даты
+                //close the date selection menu
                 if (key === 'departureFromDate') {
                     this.menuDepartureFromDate = false
                 }
-                //закрываем меню выбора даты
+                //close the date selection menu
                 else if (key === 'departureToDate') {
                     this.menuDepartureToDate = false
                 }
@@ -186,6 +190,6 @@
     }
 </script>
 
-<style scoped>
+<style>
 
 </style>

@@ -2,11 +2,6 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import store from './store'
 
-import Home from './views/Home.vue'
-import Orders from './views/Orders.vue'
-import Login from "./views/Login";
-import Register from "./views/Register";
-
 Vue.use(Router)
 
 const router = new Router({
@@ -15,43 +10,46 @@ const router = new Router({
 
   routes: [
       {
-            path: '/',
-            name: 'home',
-            component: Home
+          path: '/',
+          name: 'home',
+          component: () => import("./views/Home"),
       },
       {
           path: '/orders',
           name: 'orders',
-          component: Orders,
-          // meta: { onlyAuth: true }
+          component: () => import("./views/Orders"),
+          meta: { onlyAuth: true }
       },
       {
           path: '/login',
           name: 'login',
-          component: Login,
-          meta: { onlyGuest: true }
+          component: () => import("./views/Login"),
+          meta: { onlyGuest: true },
       },
       {
           path: '/register',
           name: 'register',
-          component: Register,
+          component: () => import("./views/Register"),
           meta: { onlyGuest: true }
+      },
+      {
+          path: '/profile',
+          name: 'profile',
+          component: () => import("./views/Profile"),
       },
   ],
 })
 
 router.beforeEach((to, from, next) => {
 
-        //инициализация польз. данных
-        store.commit({type: 'INIT_USER'})
+        //init user data
+        store.commit('INIT_USER')
 
-        //инициализация настроек
-        store.commit({type: 'INIT_SETTINGS'})
+        //init settings
+        store.commit('INIT_SETTINGS')
 
-        if (to.name === 'orders') {
-            //инициализация данных о продуктах (сортировки)
-            store.commit({type: 'INIT_ORDERS'})
-        }
+        //init orders (sort)
+        store.commit('INIT_ORDERS')
 
         if (to.matched.some(record => record.meta.onlyAuth)) {
             if (store.state.user.isAuth) {

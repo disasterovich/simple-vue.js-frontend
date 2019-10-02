@@ -19,7 +19,7 @@
                     :error-messages="errors.password"
             ></v-text-field>
 
-            <v-btn type="submit" color="primary">{{$t('login')}}</v-btn>
+            <v-btn type="submit" color="primary" :disabled="loading" :loading="loading">{{$t('login')}}</v-btn>
 
         </v-form>
     </div>
@@ -53,6 +53,7 @@
         computed: {
             ...mapState({
                 errors: state => state.user.errors,
+                loading: state => state.user.loading,
                 user: state => state.user.item,
             }),
         },

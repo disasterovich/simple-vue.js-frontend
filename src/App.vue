@@ -74,6 +74,11 @@
         <v-footer app>
             <span>&copy; 2019</span>
         </v-footer>
+
+        <v-snackbar :value="message.snackbar" @input="hideMessage" :color="message.color" :bottom="message.bottom" :right="message.right">
+            {{message.text}}
+            <v-btn text @click="hideMessage">{{$t('close')}}</v-btn>
+        </v-snackbar>
     </v-app>
 </template>
 
@@ -82,28 +87,29 @@
 
     export default {
 
+        data: () => ({
+            drawer: null,
+        }),
+
         computed: {
             ...mapState({
                 user: state => state.user,
+                message: state => state.message,
             }),
         },
 
         methods: {
             logout() {
                 this.$store.commit({type: 'LOGOUT_USER'})
+                this.$router.push({path: 'login'})
             },
             setLocale(locale) {
                 this.$store.commit('UPDATE_SETTINGS_FIELD', { key: 'locale', value: locale })
-            }
+            },
+            hideMessage() {
+                this.$store.commit('HIDE_MESSAGE')
+            },
         },
-
-        props: {
-            source: String,
-        },
-        data: () => ({
-            drawer: null,
-        }),
-
     }
 </script>
 

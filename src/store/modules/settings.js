@@ -2,17 +2,18 @@ import i18n from '../../i18n';
 
 export default {
     state: {
-        values: '',
+        locale: 'en',
+        perPage: 10,
     },
 
     mutations: {
 
         INIT_SETTINGS(state, payload) {
 
-            let settings = JSON.parse(localStorage.getItem('settings')) || {}
+            let settings = JSON.parse(localStorage.getItem('settings'))
 
             if (settings) {
-                state.values = settings || {}
+                state = settings
 
                 if (settings.locale) {
                     i18n.locale = settings.locale
@@ -22,7 +23,7 @@ export default {
 
         //обновление соотв. значения
         UPDATE_SETTINGS_FIELD(state, payload) {
-            state.values[payload.key] = payload.value
+            state[payload.key] = payload.value
 
             //сохраняем в localStorage
             let settings = JSON.parse(localStorage.getItem('settings')) || {}
