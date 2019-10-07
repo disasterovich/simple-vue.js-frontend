@@ -1,6 +1,8 @@
 # Simple frontend vue.js 2.x, vuex, vuetify, vue-router
 
-##Config paths
+![Alt text](./public/Screenshot1.png?raw=true "Screenshot 1")
+
+## Config paths
 
 Configure paths in store.js to backend server:
 ```
